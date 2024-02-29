@@ -1,0 +1,109 @@
+Distribute candies:-
+
+Problem Description :-
+
+Akash wants to distribute candies on his birthday. There are A people and he has two types of candies. B candies of the first type and C candies of the second type.
+
+He wants to distribute candies in such a way that no person has candies of both types and each person has at least one candy.
+Let X denotes the minimum candies among all people after distribution of candies.
+Find the maximum X.
+
+
+
+Problem Constraints
+
+2<=A<=B+C
+1<=B<=10^9
+1<=C<=10^9
+
+
+Input Format
+
+First argument is an integer A denoting number of people.
+Second argument is an integer B denoting number of candies of first type.
+Third argument is an integer C denoting number of candies of second type.
+
+
+Output Format
+
+Return an interger denoting the maximum X.
+
+
+Example Input
+
+A=4 B=4 C=5
+
+
+Example Output
+
+2
+
+
+Example Explanation
+
+We can distribute candies such that 2 persons gets candies of first type [2,2] and 2 persons gets candies of first type [3,2].
+So the maximum X will be 2.
+
+=====================================================================================================
+//approach-1 : (purly mathematical )- not suggested :-
+
+module.exports = {
+    //param A : integer
+    //param B : integer
+    //param C : integer
+    //return an integer
+    solve: function (A, B, C) {
+        //Average of total candies to the numbe rof people
+        const max_candies = parseInt((B + C) / A);
+
+        // if average total candies is less than B and C candies count
+        // then we can share max_Candies as maximun
+        //....else we need to return the minimun of B / C  count.
+
+
+        if (max_candies < B && max_candies < C) {
+            return max_candies;
+        } else {
+            return Math.min(B, C);
+        }
+    }
+};
+
+
+================================================================================================================================================================================================================================
+approach-2 :- using greeedy algo and the binary search :-
+----------------------------------------------------------
+
+let A = 4;
+let B = 4;
+let C = 5;
+
+// Example usage:
+let result = solve(A, B, C);
+console.log(result);
+
+function solve(A, B, C) {
+    let lo = 1;
+    let hi = B + C;
+    let ans = 0;
+    while (lo <= hi) {
+        let mid = Math.floor((lo + hi) / 2);
+        if (check(A, B, C, mid)) {// as we are asked for  maximum X., lets try maximise the X.
+            ans = mid;
+            lo = mid + 1;
+        } else {
+            hi = mid - 1;
+        }
+    }
+    return ans;
+}
+
+function check(n, a, b, x) {
+    let temp = Math.floor(a / x) + Math.floor(b / x);
+    console.log(temp)
+    if (temp >= n) {
+        return true;
+    }
+    return false;
+}
+=============================================================================================================

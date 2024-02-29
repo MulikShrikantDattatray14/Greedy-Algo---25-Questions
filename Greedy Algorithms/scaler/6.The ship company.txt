@@ -1,0 +1,292 @@
+
+
+Problem Description
+The local ship renting service has a special rate plan:
+
+It is up to a passenger to choose a ship.
+If the chosen ship has X (X > 0) vacant places at the given moment, then the ticket for such a ship costs X.
+The passengers buy tickets in turn, the first person in the queue goes first, then the second one, and so on up to A-th person.
+
+You need to tell the maximum and the minimum money that the ship company can earn if all A passengers buy tickets.
+
+
+
+Problem Constraints
+1 ≤ A ≤ 3000
+1 ≤ B ≤ 1000
+1 ≤ C[i] ≤ 1000
+It is guaranteed that there are at least A empty seats in total.
+
+
+
+Input Format
+First argument is a integer A denoting the number of passengers in the queue.
+Second arugument is a integer B deonting the number of ships.
+Third argument is an integer array C of size B where C[i] denotes the number of empty seats in the i-th ship before the ticket office starts selling tickets.
+
+
+
+Output Format
+Return an array of size 2 denoting the maximum and minimum money that the ship company can earn.
+
+
+
+Example Input
+Input 1:
+
+ A = 4
+ B = 3
+ C = [2, 1, 1]
+Input 2:
+
+ A = 4
+ B = 3
+ C = [2, 2, 2]
+
+
+Example Output
+Output 1:
+
+ [5, 5]
+Output 2:
+
+ [7, 6]
+
+
+Example Explanation
+Explantion 1:
+
+ Maximum money can be earned if the passenger choose : 2(first ship) + 1(first ship) + 1(second ship) + 1(third ship).
+ So, the cost will be 5.
+ Minimum money can be earned if the passenger choose : 1(senocd ship) + 2(first ship) + 1(first ship) + 1(third ship).
+ So, the cost will be 5.
+Explanation 2:
+
+ Maximum money can be earned if the passenger choose : 2(first ship) + 2(second ship) + 2(third ship) + 1(first ship).
+ So, the cost will be 7.
+ Minimum money can be earned if the passenger choose : 2(senocd ship) + 2(first ship) + 1(first ship) + 1(second ship).
+ So, the cost will be 6.
+
+ =============================================================================================================================================================================================================================
+
+ class MinHeap {
+    constructor() {
+        this.heap = [];
+    }
+
+    insert(element) {
+        // here we are going from bottom to top
+        this.heap.push(element);
+        this.heapifyUp();
+    }
+
+    extractMin() {
+        if (this.isEmpty()) {
+            return null;
+        }
+
+        const min = this.heap[0];
+        const lastElement = this.heap.pop();
+
+        if (this.heap.length > 0) {
+            this.heap[0] = lastElement;
+            this.heapifyDown();
+        }
+
+        return min;
+    }
+
+    peek() {
+        return this.isEmpty() ? null : this.heap[0];
+    }
+
+    isEmpty() {
+        return this.heap.length === 0;
+    }
+
+    heapifyUp() {
+        //here we are going from bottom to top
+        let currentIndex = this.heap.length - 1; // bcz its a zero based index
+
+        while (currentIndex > 0) {
+            // till we reach the top
+            const parentIndex = Math.floor((currentIndex - 1) / 2);
+            if (this.heap[currentIndex] < this.heap[parentIndex]) {
+                this.swap(currentIndex, parentIndex);
+                currentIndex = parentIndex;
+            } else {
+                break;
+            }
+        }
+    }
+
+    heapifyDown() {
+        // here we are going from top to bottom
+        let currentIndex = 0;
+
+        while (true) {
+            const leftChildIndex = 2 * currentIndex + 1;
+            const rightChildIndex = 2 * currentIndex + 2;
+            let smallestChildIndex = currentIndex;
+
+            if (
+                leftChildIndex < this.heap.length &&
+                this.heap[leftChildIndex] < this.heap[smallestChildIndex]
+            ) {
+                smallestChildIndex = leftChildIndex;
+            }
+
+            if (
+                rightChildIndex < this.heap.length &&
+                this.heap[rightChildIndex] < this.heap[smallestChildIndex]
+            ) {
+                smallestChildIndex = rightChildIndex;
+            }
+
+            if (smallestChildIndex !== currentIndex) {
+                this.swap(currentIndex, smallestChildIndex);
+                currentIndex = smallestChildIndex;
+            } else {
+                break;
+            }
+        }
+    }
+
+    swap(i, j) {
+        const temp = this.heap[i];
+        this.heap[i] = this.heap[j];
+        this.heap[j] = temp;
+    }
+}
+class MaxHeap {
+    constructor() {
+        this.heap = [];
+    }
+
+    insert(element) {// always at bottom
+        this.heap.push(element);// inserted at last position of the array.
+        this.heapifyUp();
+    }
+
+    extractMax() {// top root element
+        if (this.isEmpty()) {
+            return null;
+        }
+
+        const max = this.heap[0];// first element of the array.
+        const lastElement = this.heap.pop();
+        // put last element on the top most position i.e at the first position of the array.
+        if (this.heap.length > 0) {
+            this.heap[0] = lastElement;
+            this.heapifyDown();
+        }
+
+        return max;
+    }
+
+    peek() {
+        return this.isEmpty() ? null : this.heap[0];
+    }
+
+    isEmpty() {
+        return this.heap.length === 0;
+    }
+
+    heapifyUp() {
+        let currentIndex = this.heap.length - 1;
+        while (currentIndex > 0) {
+            const parentIndex = Math.floor((currentIndex - 1) / 2);
+            if (this.heap[currentIndex] > this.heap[parentIndex]) {
+                this.swap(currentIndex, parentIndex);
+                currentIndex = parentIndex;
+            } else {
+                break;
+            }
+        }
+    }
+
+    heapifyDown() {
+        // now you are at the index-0th , and now lets move downwards.
+
+        let currentIndex = 0;
+
+        while (true) {
+            const leftChildIndex = 2 * currentIndex + 1;
+            const rightChildIndex = 2 * currentIndex + 2;
+            let largestChildIndex = currentIndex;
+
+            // find the bigger value amongst left and right child .
+            if (leftChildIndex < this.heap.length && this.heap[leftChildIndex] > this.heap[largestChildIndex]) {
+                largestChildIndex = leftChildIndex;
+            }
+
+            if (rightChildIndex < this.heap.length && this.heap[rightChildIndex] > this.heap[largestChildIndex]) {
+                largestChildIndex = rightChildIndex;
+            }
+            // now swap the bigger value with the current index
+            if (largestChildIndex !== currentIndex) {
+                this.swap(currentIndex, largestChildIndex);
+                currentIndex = largestChildIndex;
+            } else {
+                break;
+            }
+        }
+    }
+
+    swap(i, j) {
+        const temp = this.heap[i];
+        this.heap[i] = this.heap[j];
+        this.heap[j] = temp;
+    }
+}
+
+
+
+let A = 4
+let B = 3
+let C = [2, 2, 2]
+let ans = solve(A, B, C)
+console.log(ans)
+function solve(A, B, C) {
+    let minheap = new MinHeap();
+    let maxheap = new MaxHeap();
+
+    for (let i = 0; i < C.length; i++) {
+        maxheap.insert(C[i]);
+        minheap.insert(C[i]);
+    }
+    let max_ans = 0;
+    let min_ans = 0;
+    let i = 0;
+    // A- no of passengers
+    while (!maxheap.isEmpty() && i < A) {
+        i++;
+        let val = maxheap.extractMax()
+        if (val > 1) {
+            maxheap.insert(val - 1);
+        }
+        max_ans += val;
+    }
+
+    i = 0;
+
+    while (!minheap.isEmpty() && i < A) {
+        i++;
+        let val = minheap.extractMin()
+
+        if (val > 1) {
+            minheap.insert(val - 1);
+        }
+        min_ans += val;
+    }
+
+    let ans = [];
+
+    ans.push(max_ans);
+    ans.push(min_ans);
+
+    return ans;
+}
+
+
+===============================================================================================================

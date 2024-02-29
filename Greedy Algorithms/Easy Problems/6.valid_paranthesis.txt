@@ -1,0 +1,87 @@
+//https://leetcode.com/problems/valid-parenthesis-string/description/
+
+Given a string s containing only three types of characters: '(', ')' and '*', return true if s is valid.
+
+The following rules define a valid string:
+
+Any left parenthesis '(' must have a corresponding right parenthesis ')'.
+Any right parenthesis ')' must have a corresponding left parenthesis '('.
+Left parenthesis '(' must go before the corresponding right parenthesis ')'.
+'*' could be treated as a single right parenthesis ')' or a single left parenthesis '(' or an empty string "".
+ 
+
+Example 1:
+
+Input: s = "()"
+Output: true
+Example 2:
+
+Input: s = "(*)"
+Output: true
+Example 3:
+
+Input: s = "(*))"
+Output: true
+ 
+
+Constraints:
+
+1 <= s.length <= 100
+s[i] is '(', ')' or '*'.
+
+
+===============================================================================================================================================================================================================================
+
+//https://www.youtube.com/watch?v=KuE_Cn3xhxI
+let s1 = "()"
+//Output: true
+let s2 = "(*)"
+//Output: true
+let s3 = "(*))"
+//Output: true
+let ans1 = checkValid(s1)
+let ans2 = checkValid(s2)
+let ans3 = checkValid(s3)
+
+console.log(ans1);
+console.log(ans2)
+console.log(ans3)
+
+
+//https://www.youtube.com/watch?v=KuE_Cn3xhxI&t=672s
+function checkValid(s) {
+    const open = [];
+    const star = [];
+    const len = s.length;
+    // we are pushing only the indexes.
+    for (let i = 0; i < len; ++i) {
+        if (s[i] === "(") {
+            open.push(i);
+        } else if (s[i] === "*") {
+            star.push(i);
+        } else {
+            // it is a closed bracket
+            if (open.length > 0) {
+                open.pop();
+            } else if (star.length > 0) {
+                star.pop();
+            } else {// for the incoming closed bracket - there is no open bracket nor star to balance it out.
+                return false;
+            }
+        }
+    }
+
+    // Now process leftover opening brackets
+    while (open.length > 0) {
+        if (star.length === 0) {// no stars left to balance out the remaining opening brackets
+            return false;
+        } else if (open[open.length - 1] < star[star.length - 1]) {
+            open.pop();
+            star.pop();
+        } else if (open[open.length - 1] > star[star.length - 1]) {
+            return false;
+        }
+    }
+
+    return true;
+}

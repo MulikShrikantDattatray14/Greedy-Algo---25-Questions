@@ -1,0 +1,129 @@
+
+Problem Description:-
+
+
+Given N jobs where every job is represented by following three elements of it.
+Start Time
+Finish Time
+Profit Associated
+Find and return the maximum profit subset of jobs such that no two jobs in the subset overlap.
+
+
+Problem Constraints:-
+1 <= N <= 105
+1 <= A[i][0], A[i][1], A[i][2] <= 105
+
+
+Input Format:-
+
+The first and the only line of input contains a 2d array, A, of N x 3 integers:
+A[i][0] : Start Time
+A[i][1] : Finish Time
+A[i][2] : Profit
+
+
+Output Format:-
+
+Return the maximum possible profit under the given conditions.
+
+
+Example Input
+Input 1:
+A = [ [1, 2, 50],
+      [3, 5, 20],
+      [6, 19, 100],
+      [2, 100, 200] ]
+Input 2:
+A = [ [10, 20, 50],
+      [20, 30, 20],
+      [30, 40, 100] ]
+
+
+Example Output
+Output 1:
+250
+Output 2:
+170
+
+
+Example Explanation:-
+Explanation 1:
+We can perform the 1st and the 4th job.
+Profit = 50 + 200 = 250.
+Explanation 2:
+We can perform all the jobs, since no two jobs overlap.
+So the total profit is 50 + 20 + 100 = 170
+
+===============================================================================================================================================================================================================================
+
+
+class Job {
+    constructor(start, finish, profit) {
+        this.start = start;
+        this.finish = finish;
+        this.profit = profit;
+    }
+}
+A = [[10, 20, 50],
+[20, 30, 20],
+[30, 40, 100]]
+
+
+let ans = solve(A)
+console.log(ans)
+
+function solve(A) {
+    let n = A.length;
+    let jobs = new Array(n);
+
+    for (let i = 0; i < n; i++) {
+        jobs[i] = new Job(A[i][0], A[i][1], A[i][2]);
+    }
+
+    jobs.sort((j1, j2) => {
+        //smaller finish time .
+        if (j1.finish === j2.finish) {
+            // // smaller start time is first 
+            return j1.start - j2.start;
+        }
+        return j1.finish - j2.finish;
+    });
+
+    let dp = new Array(n);
+    dp[0] = jobs[0].profit;
+
+    for (let i = 1; i < n; i++) {
+        let incl = jobs[i].profit;
+        let j = searchBinary(jobs, i);
+
+        if (j !== -1) {
+            incl += dp[j];
+        }
+
+        dp[i] = Math.max(incl, dp[i - 1]);
+    }
+
+    return dp[n - 1];
+}
+
+function searchBinary(jobs, i) {
+    let start = 0;
+    let end = i - 1;
+    let result = -1;
+
+    while (start <= end) {
+        let mid = Math.floor((start + end) / 2);
+
+        if (jobs[mid].finish <= jobs[i].start) {
+            result = mid;
+            start = mid + 1;
+        } else {
+            end = mid - 1;
+        }
+    }
+
+    return result;
+}
+
+
+
