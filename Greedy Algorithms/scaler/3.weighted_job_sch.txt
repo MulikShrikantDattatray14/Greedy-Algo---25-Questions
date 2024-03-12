@@ -1,6 +1,6 @@
 //also a leetcode question :-1235. Maximum Profit in Job Scheduling
 Problem Description:-
-
+logic : same as the 0-1 knap-sack problem
 
 Given N jobs where every job is represented by following three elements of it.
 Start Time
