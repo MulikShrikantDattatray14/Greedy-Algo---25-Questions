@@ -1,4 +1,4 @@
-
+//also a leetcode question :-1235. Maximum Profit in Job Scheduling
 Problem Description:-
 
 
@@ -57,73 +57,125 @@ So the total profit is 50 + 20 + 100 = 170
 ===============================================================================================================================================================================================================================
 
 
-class Job {
-    constructor(start, finish, profit) {
-        this.start = start;
-        this.finish = finish;
-        this.profit = profit;
-    }
-}
-A = [[10, 20, 50],
-[20, 30, 20],
-[30, 40, 100]]
+function find(i, job, n, dp) {
+    if (i >= n) return 0;
+    if (dp[i] !== -1) return dp[i];
 
+    // Find the next non-overlapping job
+    // let index = i + 1;
+    // while (index < n && job[index][0] < job[i][1]) {
+    //     index++;
+    // }
 
-let ans = solve(A)
-console.log(ans)
-
-function solve(A) {
-    let n = A.length;
-    let jobs = new Array(n);
-
-    for (let i = 0; i < n; i++) {
-        jobs[i] = new Job(A[i][0], A[i][1], A[i][2]);
-    }
-
-    jobs.sort((j1, j2) => {
-        //smaller finish time .
-        if (j1.finish === j2.finish) {
-            // // smaller start time is first 
-            return j1.start - j2.start;
+    // Find the next non-overlapping job
+    let start = i + 1
+    let end = n - 1
+    let index = n;
+    while (start <= end) {
+        let mid = parseInt((start + end) / 2)
+        if (job[mid][0] >= job[i][1]) {
+            index = mid;
+            end = mid - 1;
+        } else {
+            start = mid + 1;
         }
-        return j1.finish - j2.finish;
+    }
+
+    let pick = job[i][2] + find(index, job, n, dp); // Include current job
+    let notpick = find(i + 1, job, n, dp); // Skip current job
+    return dp[i] = Math.max(pick, notpick);
+}
+
+function jobscheduling(A) {
+    let n = A.length;
+    let dp = new Array(n).fill(-1);
+
+    // Sort jobs by start times, and if start times are equal, sort by finish times
+    A.sort((a, b) => {
+        if (a[0] === b[0]) {
+            return a[1] - b[1];
+        }
+        return a[0] - b[0];
     });
 
-    let dp = new Array(n);
-    dp[0] = jobs[0].profit;
-
-    for (let i = 1; i < n; i++) {
-        let incl = jobs[i].profit;
-        let j = searchBinary(jobs, i);
-
-        if (j !== -1) {
-            incl += dp[j];
-        }
-
-        dp[i] = Math.max(incl, dp[i - 1]);
-    }
-
-    return dp[n - 1];
+    return find(0, A, n, dp);
 }
+let A = [
+    [3, 6, 3],
+    [6, 7, 8],
+    [3, 7, 7],
+    [3, 10, 9],
+    [7, 8, 7],
+    [6, 6, 3],
+    [1, 5, 7],
+    [2, 5, 1],
+    [5, 7, 8]
+];
+let ans = jobscheduling(A);
+console.log(ans);
 
-function searchBinary(jobs, i) {
-    let start = 0;
-    let end = i - 1;
-    let result = -1;
 
+
+=============================================================================================
+
+leetcode submitted code : -
+
+
+
+function find(i, job, n, dp) {
+    if (i >= n) return 0;
+    if (dp[i] !== -1) return dp[i];
+
+    // Find the next non-overlapping job
+    // let index = i + 1;
+    // while (index < n && job[index][0] < job[i][1]) {
+    //     index++;
+    // }
+
+    // Find the next non-overlapping start for the job - next_start (lower bound i.e equal to or greater than )
+    let start = i + 1
+    let end = n - 1
+    let next_start = n;
     while (start <= end) {
-        let mid = Math.floor((start + end) / 2);
-
-        if (jobs[mid].finish <= jobs[i].start) {
-            result = mid;
-            start = mid + 1;
-        } else {
+        let mid = parseInt((start + end) / 2)
+        if (job[mid][0] >= job[i][1]) {
+            next_start = mid;
             end = mid - 1;
+        } else {
+            start = mid + 1;
         }
     }
 
-    return result;
+    let pick = job[i][2] + find(next_start, job, n, dp); // Include current job
+    let notpick = find(i + 1, job, n, dp); // Skip current job
+    return dp[i] = Math.max(pick, notpick);
 }
 
+function jobscheduling(A) {
+    let n = A.length;
+    let dp = new Array(n).fill(-1);
+
+    // Sort jobs by start times, and if start times are equal, sort by finish times
+    A.sort((a, b) => {
+        if (a[0] === b[0]) {
+            return a[1] - b[1];
+        }
+        return a[0] - b[0];
+    });
+
+    return find(0, A, n, dp);
+}
+let startTime = [1, 2, 3, 3];
+let endTime = [3, 4, 5, 6];
+let profit = [50, 10, 40, 70]
+let n = startTime.length
+let A = []
+for (let i = 0; i < n; i++) {
+    A.push([startTime[i], endTime[i], profit[i]])
+}
+
+let ans = jobscheduling(A);
+console.log(ans);
 
 
+========================================================================================
